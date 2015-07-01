@@ -3,7 +3,7 @@
 #
 # Configuration:
 #   HUBOT_ZENDESK_USER
-#   HUBOT_ZENDESK_PASSWORD
+#   HUBOT_ZENDESK_PASSWORD or HUBOT_ZENDESK_TOKEN
 #   HUBOT_ZENDESK_SUBDOMAIN
 #
 # Commands:
@@ -34,7 +34,11 @@ queries =
 zendesk_request = (msg, url, handler) ->
   zendesk_user = "#{process.env.HUBOT_ZENDESK_USER}"
   zendesk_password = "#{process.env.HUBOT_ZENDESK_PASSWORD}"
-  auth = new Buffer("#{zendesk_user}:#{zendesk_password}").toString('base64')
+  zendesk_token = "#{process.env.HUBOT_ZENDESK_TOKEN}";
+  auth_string = "#{zendesk_user}:#{zendesk_password}"
+  if zendesk_token
+    auth_string = "#{zendesk_user}/token:#{zendesk_token}"
+  auth = new Buffer(auth_string).toString('base64')
   zendesk_url = "https://#{process.env.HUBOT_ZENDESK_SUBDOMAIN}.zendesk.com/api/v2"
 
   msg.http("#{zendesk_url}/#{url}")
